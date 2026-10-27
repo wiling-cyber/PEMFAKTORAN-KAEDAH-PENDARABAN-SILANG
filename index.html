@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuasai Algebra: Pemfaktoran Ungkapan Algebra - Cikgu Wi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax for rendering mathematical expressions -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(-45deg, #FFDEE9, #B5FFFC, #E0C3FC, #8EC5FC);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        h1, h2, h3, .font-display {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Cross Multiplication Table Styles */
+        .cross-multiplication-table {
+            border-collapse: collapse;
+            font-family: inherit;
+            margin: 12px 0;
+            font-weight: bold;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .cross-multiplication-table th {
+            background-color: #F3E8FF;
+            color: #6B21A8;
+            padding: 8px 14px;
+            font-size: 0.875rem;
+            border: 1px solid #E9D5FF;
+        }
+        .cross-multiplication-table td {
+            padding: 8px 14px;
+            text-align: center;
+            border: 1px solid #E2E8F0;
+            font-size: 0.95rem;
+        }
+        .cross-multiplication-table tr.result-row td {
+            background-color: #F0FDF4;
+            color: #166534;
+            font-weight: 800;
+            border-top: 2px solid #22C55E;
+        }
+
+        /* Card entry animation */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .animate-card {
+            animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Floating background elements */
+        .bg-floating-symbol {
+            position: fixed;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+            user-select: none;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatSymbol 8s infinite ease-in-out;
+        }
+
+        @keyframes floatSymbol {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(15deg); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7FAFC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 py-6 px-4 sm:px-6 lg:px-8">
+
+    <!-- Floating Background Math Animations -->
+    <div class="bg-floating-symbol text-5xl top-10 left-10" style="animation-delay: 0s;">x²</div>
+    <div class="bg-floating-symbol text-6xl top-1/4 right-12" style="animation-delay: 1.5s;">+</div>
+    <div class="bg-floating-symbol text-5xl bottom-1/3 left-8" style="animation-delay: 3s;">(x−y)</div>
+    <div class="bg-floating-symbol text-6xl bottom-12 right-1/4" style="animation-delay: 2s;">÷</div>
+    <div class="bg-floating-symbol text-5xl top-1/2 left-1/4" style="animation-delay: 4s;">π</div>
+
+    <!-- Audio Mute / Unmute Button Floating Toggle -->
+    <button onclick="toggleAudio()" id="audioBtn" title="Tukar Tetapan Audio"
+        class="fixed top-4 right-4 z-50 bg-white/90 backdrop-blur-md hover:bg-white text-slate-700 p-3 rounded-full shadow-lg border-2 border-pink-200 transition-all transform hover:scale-110 flex items-center justify-center">
+        <i data-lucide="volume-2" id="audioIcon" class="w-6 h-6 text-pink-500"></i>
+    </button>
+
+    <div class="max-w-4xl mx-auto space-y-6 relative z-10">
+        
+        <!-- Header Image Banner (Gambar Fit Penuh Tanpa Terpotong) -->
+        <div class="bg-white/90 backdrop-blur-md rounded-3xl p-2 sm:p-3 shadow-xl border-4 border-white overflow-hidden transform hover:scale-[1.01] transition duration-300">
+            <div class="w-full bg-pink-50/50 rounded-2xl overflow-hidden flex items-center justify-center">
+                <img src="MMWI.png" alt="Matematik Bersama Cikgu Wi Banner" 
+                     class="w-full h-auto max-h-[420px] object-contain rounded-2xl shadow-sm"
+                     onerror="this.src='https://placehold.co/1200x400/ff80b5/ffffff?text=Matematik+Bersama+Cikgu+Wi'">
+            </div>
+        </div>
+
+        <!-- Sticky Progress Bar Card -->
+        <div class="sticky top-4 z-40 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md border-2 border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <span class="text-2xl">🚀</span>
+                <div class="text-xs font-bold text-slate-600">
+                    KEMAJUAN KUIZ: <span id="progressText" class="text-pink-600 text-sm">0/20 Dijawab</span>
+                </div>
+            </div>
+            <div class="w-full sm:w-2/3 bg-slate-100 h-4 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                <div id="progressBar" class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 h-full rounded-full transition-all duration-500 w-0"></div>
+            </div>
+        </div>
+
+        <!-- Main Form Container -->
+        <form id="quizForm" onsubmit="event.preventDefault(); submitQuiz();" class="space-y-6">
+            
+            <!-- Student Information Card -->
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-7 shadow-md border-2 border-amber-200 animate-card">
+                <h2 class="text-xl font-bold text-amber-600 mb-4 flex items-center gap-2 font-display">
+                    <span class="text-2xl">✏️</span> Maklumat Murid
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="studentName" class="block text-sm font-bold text-slate-700 mb-1">Nama Murid <span class="text-pink-500">*</span></label>
+                        <input type="text" id="studentName" required placeholder="Contoh: Nur Aisyah"
+                            class="w-full px-4 py-3 rounded-2xl border-2 border-amber-100 focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none transition font-semibold text-slate-800 bg-amber-50/30">
+                    </div>
+                    <div>
+                        <label for="studentClass" class="block text-sm font-bold text-slate-700 mb-1">Kelas <span class="text-pink-500">*</span></label>
+                        <input type="text" id="studentClass" required placeholder="Contoh: 2 Bijak"
+                            class="w-full px-4 py-3 rounded-2xl border-2 border-amber-100 focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none transition font-semibold text-slate-800 bg-amber-50/30">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Header -->
+            <div class="flex items-center justify-between px-2">
+                <h2 class="text-2xl font-bold text-purple-800 flex items-center gap-2 font-display drop-shadow-sm">
+                    <span>🎯</span> Soalan Objektif Darab Silang (20 Soalan)
+                </h2>
+                <span class="text-xs font-bold text-purple-800 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-purple-200 shadow-sm">100 Markah</span>
+            </div>
+
+            <!-- Questions Container -->
+            <div id="questionsContainer" class="space-y-6">
+                <!-- Dynamically Generated via JS -->
+            </div>
+
+            <!-- Submit Button Card -->
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-md border-2 border-pink-200 text-center">
+                <button type="submit" id="submitBtn"
+                    class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 text-white font-black text-lg rounded-2xl shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 transform hover:-translate-y-1 transition duration-200 flex items-center justify-center gap-3 mx-auto font-display">
+                    <span>🌟</span> Hantar Jawapan & Semak Keputusan <span>🎉</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Results Section (Hidden by Default) -->
+        <div id="resultsSection" class="hidden space-y-6">
+            
+            <!-- Result Summary Card -->
+            <div id="resultBanner" class="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-amber-200 text-center relative overflow-hidden animate-card">
+                <div id="badgeEmoji" class="text-6xl mb-2 animate-bounce">🏆</div>
+                <div id="scoreBadge" class="w-32 h-32 rounded-full flex flex-col items-center justify-center mx-auto mb-4 border-4 text-4xl font-black shadow-inner font-display">
+                    <span id="scorePercent">0%</span>
+                </div>
+                <h3 id="resultTitle" class="text-3xl font-black text-slate-800 font-display">Tahniah!</h3>
+                <p id="studentGreeting" class="text-slate-600 font-bold mt-1 text-base sm:text-lg"></p>
+                <div class="flex justify-center items-center gap-6 mt-4 text-base font-bold bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div class="text-slate-600">Jawapan Betul: <span id="correctCount" class="font-extrabold text-emerald-600 text-xl">0</span> / 20</div>
+                    <div class="text-slate-600">Jumlah Markah: <span id="finalScore" class="font-extrabold text-purple-600 text-xl">0</span> / 100</div>
+                </div>
+                
+                <button onclick="resetQuiz()" class="mt-6 px-8 py-3 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-2xl shadow-md transition transform hover:scale-105 inline-flex items-center gap-2 font-display">
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i> Cuba Lagi
+                </button>
+            </div>
+
+            <!-- Detailed Answer Review & Solutions -->
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-md border-2 border-purple-200">
+                <h3 class="text-2xl font-bold text-purple-800 mb-6 flex items-center gap-2 font-display">
+                    <span>💡</span> Skema Jawapan & Langkah Kerja Lengkap
+                </h3>
+                <div id="solutionsContainer" class="space-y-6">
+                    <!-- Dynamically Generated Solutions -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    // URL Google Apps Script
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzK3ZZgRlAx7fdJeKCIZLDks8BdFFDbzdqGuSBVz9qB557aBXruyBRZMZK8MXnrlH0m/exec';
+
+    // Web Audio API Synthesizer
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        return audioCtx;
+    }
+
+    function toggleAudio() {
+        audioEnabled = !audioEnabled;
+        const icon = document.getElementById('audioIcon');
+        if (audioEnabled) {
+            icon.setAttribute('data-lucide', 'volume-2');
+            playSound('click');
+        } else {
+            icon.setAttribute('data-lucide', 'volume-x');
+        }
+        lucide.createIcons();
+    }
+
+    function playSound(type) {
+        if (!audioEnabled) return;
+        try {
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+
+            if (type === 'click') {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'select') {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'wrong') {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'victory') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.1);
+                    gain.gain.setValueAtTime(0.25, now + index * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + index * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + index * 0.1);
+                    osc.stop(now + index * 0.1 + 0.3);
+                });
+            }
+        } catch (e) {
+            console.log("Audio error:", e);
+        }
+    }
+
+    // 20 Questions ALL using Darab Silang
+    const rawQuizData = [
+        {
+            id: 1,
+            question: "Faktorkan ungkapan algebra \\(x^2 + 5x + 6\\).",
+            options: ["(x + 2)(x + 3)", "(x + 1)(x + 6)", "(x - 2)(x - 3)", "(x + 5)(x + 1)"],
+            correctAnswerText: "(x + 2)(x + 3)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>+2</td><td>+2x</td></tr>
+                            <tr><td>x</td><td>+3</td><td>+3x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>+6</td><td>+5x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 + 5x + 6 = (x + 2)(x + 3)\\)</p>
+            `
+        },
+        {
+            id: 2,
+            question: "Faktorkan ungkapan algebra \\(x^2 + 7x + 10\\).",
+            options: ["(x + 2)(x + 5)", "(x + 1)(x + 10)", "(x - 2)(x - 5)", "(x + 3)(x + 4)"],
+            correctAnswerText: "(x + 2)(x + 5)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>+2</td><td>+2x</td></tr>
+                            <tr><td>x</td><td>+5</td><td>+5x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>+10</td><td>+7x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 + 7x + 10 = (x + 2)(x + 5)\\)</p>
+            `
+        },
+        {
+            id: 3,
+            question: "Faktorkan ungkapan algebra \\(x^2 + 7x + 12\\).",
+            options: ["(x + 3)(x + 4)", "(x + 2)(x + 6)", "(x - 3)(x - 4)", "(x + 1)(x + 12)"],
+            correctAnswerText: "(x + 3)(x + 4)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>+3</td><td>+3x</td></tr>
+                            <tr><td>x</td><td>+4</td><td>+4x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>+12</td><td>+7x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 + 7x + 12 = (x + 3)(x + 4)\\)</p>
+            `
+        },
+        {
+            id: 4,
+            question: "Faktorkan ungkapan algebra \\(x^2 + 9x + 20\\).",
+            options: ["(x + 4)(x + 5)", "(x + 2)(x + 10)", "(x - 4)(x - 5)", "(x + 1)(x + 20)"],
+            correctAnswerText: "(x + 4)(x + 5)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>+4</td><td>+4x</td></tr>
+                            <tr><td>x</td><td>+5</td><td>+5x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>+20</td><td>+9x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 + 9x + 20 = (x + 4)(x + 5)\\)</p>
+            `
+        },
+        {
+            id: 5,
+            question: "Faktorkan ungkapan algebra \\(x^2 - 6x + 8\\).",
+            options: ["(x - 2)(x - 4)", "(x + 2)(x + 4)", "(x - 1)(x - 8)", "(x - 2)(x + 4)"],
+            correctAnswerText: "(x - 2)(x - 4)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>-2</td><td>-2x</td></tr>
+                            <tr><td>x</td><td>-4</td><td>-4x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>+8</td><td>-6x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 - 6x + 8 = (x - 2)(x - 4)\\)</p>
+            `
+        },
+        {
+            id: 6,
+            question: "Faktorkan ungkapan algebra \\(x^2 - 8x + 15\\).",
+            options: ["(x - 3)(x - 5)", "(x + 3)(x + 5)", "(x - 1)(x - 15)", "(x - 2)(x - 6)"],
+            correctAnswerText: "(x - 3)(x - 5)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>-3</td><td>-3x</td></tr>
+                            <tr><td>x</td><td>-5</td><td>-5x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>+15</td><td>-8x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 - 8x + 15 = (x - 3)(x - 5)\\)</p>
+            `
+        },
+        {
+            id: 7,
+            question: "Faktorkan ungkapan algebra \\(x^2 + 2x - 15\\).",
+            options: ["(x - 3)(x + 5)", "(x + 3)(x - 5)", "(x - 1)(x + 15)", "(x + 2)(x - 15)"],
+            correctAnswerText: "(x - 3)(x + 5)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>-3</td><td>-3x</td></tr>
+                            <tr><td>x</td><td>+5</td><td>+5x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>-15</td><td>+2x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 + 2x - 15 = (x - 3)(x + 5)\\)</p>
+            `
+        },
+        {
+            id: 8,
+            question: "Faktorkan ungkapan algebra \\(x^2 + 4x - 12\\).",
+            options: ["(x - 2)(x + 6)", "(x + 2)(x - 6)", "(x - 3)(x + 4)", "(x - 1)(x + 12)"],
+            correctAnswerText: "(x - 2)(x + 6)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>-2</td><td>-2x</td></tr>
+                            <tr><td>x</td><td>+6</td><td>+6x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>-12</td><td>+4x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 + 4x - 12 = (x - 2)(x + 6)\\)</p>
+            `
+        },
+        {
+            id: 9,
+            question: "Faktorkan ungkapan algebra \\(x^2 - 3x - 10\\).",
+            options: ["(x + 2)(x - 5)", "(x - 2)(x + 5)", "(x - 1)(x + 10)", "(x - 3)(x + 10)"],
+            correctAnswerText: "(x + 2)(x - 5)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>+2</td><td>+2x</td></tr>
+                            <tr><td>x</td><td>-5</td><td>-5x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>-10</td><td>-3x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 - 3x - 10 = (x + 2)(x - 5)\\)</p>
+            `
+        },
+        {
+            id: 10,
+            question: "Faktorkan ungkapan algebra \\(x^2 - 5x - 14\\).",
+            options: ["(x + 2)(x - 7)", "(x - 2)(x + 7)", "(x + 1)(x - 14)", "(x - 3)(x + 4)"],
+            correctAnswerText: "(x + 2)(x - 7)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>x</td><td>+2</td><td>+2x</td></tr>
+                            <tr><td>x</td><td>-7</td><td>-7x</td></tr>
+                            <tr class="result-row"><td>x²</td><td>-14</td><td>-5x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(x^2 - 5x - 14 = (x + 2)(x - 7)\\)</p>
+            `
+        },
+        {
+            id: 11,
+            question: "Faktorkan ungkapan algebra \\(2x^2 + 7x + 3\\).",
+            options: ["(2x + 1)(x + 3)", "(2x + 3)(x + 1)", "(x + 2)(2x + 3)", "(2x - 1)(x - 3)"],
+            correctAnswerText: "(2x + 1)(x + 3)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>2x</td><td>+1</td><td>+x</td></tr>
+                            <tr><td>x</td><td>+3</td><td>+6x</td></tr>
+                            <tr class="result-row"><td>2x²</td><td>+3</td><td>+7x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(2x^2 + 7x + 3 = (2x + 1)(x + 3)\\)</p>
+            `
+        },
+        {
+            id: 12,
+            question: "Faktorkan ungkapan algebra \\(2x^2 + 5x + 2\\).",
+            options: ["(2x + 1)(x + 2)", "(2x + 2)(x + 1)", "(x + 5)(2x + 1)", "(2x - 1)(x - 2)"],
+            correctAnswerText: "(2x + 1)(x + 2)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>2x</td><td>+1</td><td>+x</td></tr>
+                            <tr><td>x</td><td>+2</td><td>+4x</td></tr>
+                            <tr class="result-row"><td>2x²</td><td>+2</td><td>+5x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(2x^2 + 5x + 2 = (2x + 1)(x + 2)\\)</p>
+            `
+        },
+        {
+            id: 13,
+            question: "Faktorkan ungkapan algebra \\(3x^2 - 5x - 2\\).",
+            options: ["(3x + 1)(x - 2)", "(3x - 1)(x + 2)", "(x + 1)(3x - 2)", "(3x + 2)(x - 1)"],
+            correctAnswerText: "(3x + 1)(x - 2)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>3x</td><td>+1</td><td>+x</td></tr>
+                            <tr><td>x</td><td>-2</td><td>-6x</td></tr>
+                            <tr class="result-row"><td>3x²</td><td>-2</td><td>-5x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(3x^2 - 5x - 2 = (3x + 1)(x - 2)\\)</p>
+            `
+        },
+        {
+            id: 14,
+            question: "Faktorkan ungkapan algebra \\(3x^2 - 7x + 2\\).",
+            options: ["(3x - 1)(x - 2)", "(3x + 1)(x + 2)", "(3x - 2)(x - 1)", "(x - 3)(3x - 1)"],
+            correctAnswerText: "(3x - 1)(x - 2)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>3x</td><td>-1</td><td>-x</td></tr>
+                            <tr><td>x</td><td>-2</td><td>-6x</td></tr>
+                            <tr class="result-row"><td>3x²</td><td>+2</td><td>-7x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(3x^2 - 7x + 2 = (3x - 1)(x - 2)\\)</p>
+            `
+        },
+        {
+            id: 15,
+            question: "Faktorkan ungkapan algebra \\(2x^2 - 7x + 6\\).",
+            options: ["(2x - 3)(x - 2)", "(2x - 1)(x - 6)", "(2x + 3)(x + 2)", "(x - 3)(2x - 2)"],
+            correctAnswerText: "(2x - 3)(x - 2)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>2x</td><td>-3</td><td>-3x</td></tr>
+                            <tr><td>x</td><td>-2</td><td>-4x</td></tr>
+                            <tr class="result-row"><td>2x²</td><td>+6</td><td>-7x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(2x^2 - 7x + 6 = (2x - 3)(x - 2)\\)</p>
+            `
+        },
+        {
+            id: 16,
+            question: "Faktorkan ungkapan algebra \\(2x^2 + 9x + 4\\).",
+            options: ["(2x + 1)(x + 4)", "(2x + 4)(x + 1)", "(2x + 2)(x + 2)", "(x + 8)(2x + 1)"],
+            correctAnswerText: "(2x + 1)(x + 4)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>2x</td><td>+1</td><td>+x</td></tr>
+                            <tr><td>x</td><td>+4</td><td>+8x</td></tr>
+                            <tr class="result-row"><td>2x²</td><td>+4</td><td>+9x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(2x^2 + 9x + 4 = (2x + 1)(x + 4)\\)</p>
+            `
+        },
+        {
+            id: 17,
+            question: "Faktorkan ungkapan algebra \\(3x^2 + 10x + 3\\).",
+            options: ["(3x + 1)(x + 3)", "(3x + 3)(x + 1)", "(x + 3)(3x + 2)", "(3x - 1)(x - 3)"],
+            correctAnswerText: "(3x + 1)(x + 3)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>3x</td><td>+1</td><td>+x</td></tr>
+                            <tr><td>x</td><td>+3</td><td>+9x</td></tr>
+                            <tr class="result-row"><td>3x²</td><td>+3</td><td>+10x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(3x^2 + 10x + 3 = (3x + 1)(x + 3)\\)</p>
+            `
+        },
+        {
+            id: 18,
+            question: "Faktorkan ungkapan algebra \\(2x^2 - x - 3\\).",
+            options: ["(2x - 3)(x + 1)", "(2x + 3)(x - 1)", "(2x - 1)(x + 3)", "(x - 3)(2x + 1)"],
+            correctAnswerText: "(2x - 3)(x + 1)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>2x</td><td>-3</td><td>-3x</td></tr>
+                            <tr><td>x</td><td>+1</td><td>+2x</td></tr>
+                            <tr class="result-row"><td>2x²</td><td>-3</td><td>-x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(2x^2 - x - 3 = (2x - 3)(x + 1)\\)</p>
+            `
+        },
+        {
+            id: 19,
+            question: "Faktorkan ungkapan algebra \\(4x^2 - 4x - 3\\).",
+            options: ["(2x - 3)(2x + 1)", "(2x + 3)(2x - 1)", "(4x + 1)(x - 3)", "(4x - 3)(x + 1)"],
+            correctAnswerText: "(2x - 3)(2x + 1)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>2x</td><td>-3</td><td>-6x</td></tr>
+                            <tr><td>2x</td><td>+1</td><td>+2x</td></tr>
+                            <tr class="result-row"><td>4x²</td><td>-3</td><td>-4x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(4x^2 - 4x - 3 = (2x - 3)(2x + 1)\\)</p>
+            `
+        },
+        {
+            id: 20,
+            question: "Faktorkan ungkapan algebra \\(5x^2 - 13x - 6\\).",
+            options: ["(5x + 2)(x - 3)", "(5x - 2)(x + 3)", "(5x - 3)(x + 2)", "(x - 6)(5x + 1)"],
+            correctAnswerText: "(5x + 2)(x - 3)",
+            explanation: `
+                <p class="font-bold text-purple-700">Langkah Pengiraan (Kaedah Darab Silang):</p>
+                <div class="overflow-x-auto">
+                    <table class="cross-multiplication-table">
+                        <thead><tr><th>Faktor 1</th><th>Faktor 2</th><th>Darab Silang</th></tr></thead>
+                        <tbody>
+                            <tr><td>5x</td><td>+2</td><td>+2x</td></tr>
+                            <tr><td>x</td><td>-3</td><td>-15x</td></tr>
+                            <tr class="result-row"><td>5x²</td><td>-6</td><td>-13x</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-slate-600 mt-1">Maka, \\(5x^2 - 13x - 6 = (5x + 2)(x - 3)\\)</p>
+            `
+        }
+    ];
+
+    let userAnswers = {};
+
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    const optionColorClasses = [
+        "bg-blue-50/80 border-blue-200 hover:border-blue-400 hover:bg-blue-100/80 text-blue-900",
+        "bg-pink-50/80 border-pink-200 hover:border-pink-400 hover:bg-pink-100/80 text-pink-900",
+        "bg-amber-50/80 border-amber-200 hover:border-amber-400 hover:bg-amber-100/80 text-amber-900",
+        "bg-emerald-50/80 border-emerald-200 hover:border-emerald-400 hover:bg-emerald-100/80 text-emerald-900"
+    ];
+
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = rawQuizData.map((q, idx) => {
+            const shuffledOptions = shuffleArray(q.options);
+
+            return `
+                <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-md border-2 border-purple-100 animate-card" id="q_card_${q.id}">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-start gap-3">
+                            <span class="bg-purple-100 text-purple-800 text-sm font-black px-3 py-1 rounded-xl font-display">
+                                Soalan ${idx + 1}
+                            </span>
+                            <p class="text-lg font-bold text-slate-800 leading-relaxed pt-0.5">
+                                ${q.question}
+                            </p>
+                        </div>
+                        <span id="badge_q_${q.id}" class="hidden px-3 py-1 rounded-full text-xs font-black shrink-0"></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-2 sm:pl-4" id="options_q_${q.id}">
+                        ${shuffledOptions.map((opt, oIdx) => {
+                            const colorClass = optionColorClasses[oIdx % optionColorClasses.length];
+                            return `
+                                <label id="label_q_${q.id}_${oIdx}" class="opt-label flex items-center justify-between p-3.5 rounded-2xl border-2 ${colorClass} cursor-pointer transition-all font-semibold shadow-sm hover:shadow-md group">
+                                    <div class="flex items-center">
+                                        <input type="radio" name="q_${q.id}" value="${opt}" onchange="selectAndCheckAnswer(${q.id}, '${opt}', '${q.correctAnswerText}')"
+                                            class="w-5 h-5 text-purple-600 focus:ring-purple-400 border-slate-300 rounded-full">
+                                        <span class="ml-3 font-bold">\\(${opt}\\)</span>
+                                    </div>
+                                    <span class="status-icon font-extrabold text-sm hidden"></span>
+                                </label>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Kotak Langkah Pengiraan Terus Dipaparkan Jika Salah -->
+                    <div id="explanation_q_${q.id}" class="hidden mt-4 pt-4 border-t-2 border-rose-100 bg-rose-50/50 p-4 rounded-2xl animate-card">
+                        <p class="text-sm font-bold text-rose-700 mb-2 flex items-center gap-1">
+                            <span>❌</span> Jawapan anda tidak tepat! Jawapan betul: <span class="text-emerald-700 ml-1 font-extrabold">\\(${q.correctAnswerText}\\)</span>
+                        </p>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200">
+                            ${q.explanation}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    // Fungsi Menyemak Jawapan Serta-merta (Instant Feedback)
+    function selectAndCheckAnswer(questionId, selectedVal, correctVal) {
+        userAnswers[questionId] = selectedVal;
+        updateProgress();
+
+        const optionsContainer = document.getElementById(`options_q_${questionId}`);
+        const labels = optionsContainer.querySelectorAll('.opt-label');
+        const inputs = optionsContainer.querySelectorAll('input[type="radio"]');
+        const badge = document.getElementById(`badge_q_${questionId}`);
+        const expBox = document.getElementById(`explanation_q_${questionId}`);
+
+        // Kunci semua pilihan selepas menjawab
+        inputs.forEach(input => input.disabled = true);
+
+        const isCorrect = selectedVal === correctVal;
+
+        if (isCorrect) {
+            playSound('select');
+            badge.innerText = '✓ BETUL';
+            badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300';
+            badge.classList.remove('hidden');
+        } else {
+            playSound('wrong');
+            badge.innerText = '✗ SALAH';
+            badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300';
+            badge.classList.remove('hidden');
+            // Tunjuk terus langkah kerja
+            expBox.classList.remove('hidden');
+        }
+
+        // Kemaskini warna setiap petak soalan
+        labels.forEach(label => {
+            const input = label.querySelector('input');
+            const icon = label.querySelector('.status-icon');
+            label.classList.remove('hover:shadow-md', 'cursor-pointer');
+            label.classList.add('cursor-not-allowed', 'opacity-90');
+
+            if (input.value === correctVal) {
+                // Petak jawapan BETUL -> Warna Hijau
+                label.className = 'flex items-center justify-between p-3.5 rounded-2xl border-2 bg-emerald-100 border-emerald-500 text-emerald-950 font-bold shadow-md';
+                icon.innerText = '✓ Betul';
+                icon.className = 'status-icon font-extrabold text-sm text-emerald-700 ml-2';
+                icon.classList.remove('hidden');
+            } else if (input.value === selectedVal && !isCorrect) {
+                // Petak jawapan SALAH yang dipilih -> Warna Merah
+                label.className = 'flex items-center justify-between p-3.5 rounded-2xl border-2 bg-rose-100 border-rose-500 text-rose-950 font-bold shadow-md';
+                icon.innerText = '✗ Salah';
+                icon.className = 'status-icon font-extrabold text-sm text-rose-700 ml-2';
+                icon.classList.remove('hidden');
+            } else {
+                // Petak lain -> Malapkan warna
+                label.classList.add('opacity-40');
+            }
+        });
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    function updateProgress() {
+        const count = Object.keys(userAnswers).length;
+        document.getElementById('progressText').innerText = `${count}/20 Dijawab`;
+        const percentage = (count / 20) * 100;
+        document.getElementById('progressBar').style.width = `${percentage}%`;
+    }
+
+    function submitQuiz() {
+        const name = document.getElementById('studentName').value.trim();
+        const studentClass = document.getElementById('studentClass').value.trim();
+
+        if (!name || !studentClass) {
+            alert('Sila lengkapkan Nama dan Kelas anda terlebih dahulu.');
+            return;
+        }
+
+        const answeredCount = Object.keys(userAnswers).length;
+        if (answeredCount < 20) {
+            if (!confirm(`Anda baru menjawab ${answeredCount} daripada 20 soalan. Adakah anda pasti mahu menghantar jawapan?`)) {
+                return;
+            }
+        }
+
+        let correctCount = 0;
+        rawQuizData.forEach(q => {
+            if (userAnswers[q.id] === q.correctAnswerText) {
+                correctCount++;
+            }
+        });
+
+        const score = correctCount * 5;
+
+        // Render Ringkasan Akhir Keputusan
+        document.getElementById('scorePercent').innerText = `${score}%`;
+        document.getElementById('correctCount').innerText = correctCount;
+        document.getElementById('finalScore').innerText = score;
+        document.getElementById('studentGreeting').innerText = `Tahniah ${name} (${studentClass})! Anda telah menyelesaikan kuiz ini.`;
+
+        const badgeEmoji = document.getElementById('badgeEmoji');
+        const scoreBadge = document.getElementById('scoreBadge');
+        const resultTitle = document.getElementById('resultTitle');
+
+        if (score >= 80) {
+            badgeEmoji.innerText = '🏆';
+            scoreBadge.className = 'w-32 h-32 rounded-full flex flex-col items-center justify-center mx-auto mb-4 border-4 text-4xl font-black shadow-inner font-display bg-emerald-100 border-emerald-400 text-emerald-700';
+            resultTitle.innerText = 'Cemerlang!';
+            playSound('victory');
+            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        } else if (score >= 50) {
+            badgeEmoji.innerText = '🌟';
+            scoreBadge.className = 'w-32 h-32 rounded-full flex flex-col items-center justify-center mx-auto mb-4 border-4 text-4xl font-black shadow-inner font-display bg-amber-100 border-amber-400 text-amber-700';
+            resultTitle.innerText = 'Syabas!';
+            playSound('victory');
+        } else {
+            badgeEmoji.innerText = '💪';
+            scoreBadge.className = 'w-32 h-32 rounded-full flex flex-col items-center justify-center mx-auto mb-4 border-4 text-4xl font-black shadow-inner font-display bg-rose-100 border-rose-400 text-rose-700';
+            resultTitle.innerText = 'Teruskan Usaha!';
+            playSound('click');
+        }
+
+        // Render Ringkasan Jawapan di Bahagian Akhir
+        const solutionsContainer = document.getElementById('solutionsContainer');
+        solutionsContainer.innerHTML = rawQuizData.map((q, idx) => {
+            const userChoice = userAnswers[q.id];
+            const isCorrect = userChoice === q.correctAnswerText;
+
+            return `
+                <div class="p-5 rounded-2xl border-2 ${isCorrect ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-slate-700">Soalan ${idx + 1}: ${q.question}</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-black ${isCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}">
+                            ${isCorrect ? '✓ Betul (+5)' : '✗ Salah (0)'}
+                        </span>
+                    </div>
+                    <div class="text-sm font-semibold space-y-1 mb-3">
+                        <p class="${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                            Jawapan Anda: \\(${userChoice || 'Tiada Jawapan'}\\)
+                        </p>
+                        ${!isCorrect ? `<p class="text-emerald-700">Jawapan Tepat: \\(${q.correctAnswerText}\\)</p>` : ''}
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200">
+                        ${q.explanation}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Hantar Data ke Google Apps Script
+        const formData = new FormData();
+        formData.append('Nama', name);
+        formData.append('Kelas', studentClass);
+        formData.append('Markah', score);
+        formData.append('Betul', `${correctCount}/20`);
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(res => console.log('Successfully saved to spreadsheet'))
+            .catch(err => console.log('Submission error:', err));
+
+        // Tukar Skrin Paparan
+        document.getElementById('quizForm').classList.add('hidden');
+        document.getElementById('resultsSection').classList.remove('hidden');
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+        userAnswers = {};
+        document.getElementById('quizForm').reset();
+        document.getElementById('quizForm').classList.remove('hidden');
+        document.getElementById('resultsSection').classList.add('hidden');
+        updateProgress();
+        renderQuestions();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Inisialisasi Halaman
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        renderQuestions();
+    });
+</script>
+</body>
+</html>
